@@ -1,0 +1,27 @@
+\begin{thebibliography}{1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{https://doi.org/#1}
+
+\bibitem{andrews2018engineering}
+Andrews, K., Steinau, S., Reichert, M.: Engineering a highly scalable
+  object-aware process management engine using distributed microservices. In:
+  OTM Confederated International Conferences" On the Move to Meaningful
+  Internet Systems". pp. 80--97. Springer (2018)
+
+\bibitem{reichert2012enabling}
+Reichert, M., Weber, B.: Enabling flexibility in process-aware information
+  systems: challenges, methods, technologies. Springer Science \& Business
+  Media (2012)
+
+\bibitem{steinau2019dalec}
+Steinau, S., Marrella, A., Andrews, K., Leotta, F., Mecella, M., Reichert, M.:
+  Dalec: a framework for the systematic evaluation of data-centric approaches
+  to process management software. Software \& Systems Modeling pp. 1--38 (2019)
+
+\bibitem{wikipedia2004plagiarism}
+{Wikipedia contributors}: Plagiarism --- {W}ikipedia{,} the free encyclopedia
+  (2004), \url{https://en.wikipedia.org/w/index.php?title=Plagiarism}, [Online;
+  accessed 22-July-2004]
+
+\end{thebibliography}
