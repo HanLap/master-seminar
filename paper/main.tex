@@ -1,0 +1,80 @@
+\documentclass[a4paper, 12pt]{scrartcl}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+% \usepackage[german]{babel}
+
+
+\addtokomafont{disposition}{\sffamily}
+
+
+
+% To include graphics
+\usepackage{graphicx}
+
+% Math stuff
+\usepackage{amsmath, amsfonts, amssymb, mathtools, mathabx}
+\usepackage[bb=boondox]{mathalfa}
+
+
+% For listings
+% needs -shell-escape option in latex and pygments installed (see https://pygments.org/)
+\usepackage{minted}
+
+% Some examples for quick inline code
+\newcommand{\prolog}[1]{\mintinline{prolog}{#1}}
+\newcommand{\haskell}[1]{\mintinline{haskell}{#1}}
+
+% For diagrams and drawings
+\usepackage{tikz}
+
+% For Pseudocode
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+% Lorem Ipsum
+\usepackage{blindtext}
+
+% Add you works title here
+\title{Language-Oriented Programming}
+% Add the seminar title here
+\subtitle{Seminar: Recent Research on Declarative Programming\\
+  (Winter Term 2022/23)}
+% Add your or your ghostwriter's name here
+\author{Hannah Lappe}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  \blindtext
+  $\lambda$Prolog
+  \texttt{LANG-N-PLAY}
+\end{abstract}
+
+\section{Introduction}
+\blindtext
+
+\section{Main Part}
+\blindtext \cite{cimini_effectiveness_2020}
+
+\begin{align*}
+  fib : \mathbb{N} & \longrightarrow \mathbb{N}      \\
+  0                & \longmapsto 1                   \\
+  1                & \longmapsto 1                   \\
+  N                & \longmapsto fib(N-1) + fib(N-2)
+\end{align*}
+
+
+\section{Conclusion}
+\cite{*}
+
+
+\bibliographystyle{ieeetr}
+\bibliography{bibliography}
+\end{document}
