@@ -1,0 +1,37 @@
+
+type member A -> list A -> o.
+member Name [Name|Tail].
+member Name [head|Tail] :- member Name Tail.
+
+type length list A -> int -> o.
+length [] 0.
+length [Head|Tail] Len :- length Tail LenT, Len is LenT + 1.
+
+
+kind option type -> type.
+
+type none option A.
+type some A -> option A.
+
+kind pair type -> type -> type.
+type pr A -> B -> pair A B.
+
+kind ressource, location type.
+type loc pair int int -> option ressource -> location.
+type food, gold, stone, wood ressource.
+
+type filterLocations list location -> list location -> o.
+filterLocations nil nil.
+filterLocations [loc P none|Tail] Flist :- filterLocations Tail Flist.
+filterLocations [loc P (some Res)|Tail] [loc P (some Res)|Flist] :- filterLocations Tail Flist.
+
+
+kind diffT type.
+type injI int -> diffT.
+type injS string -> diffT.
+
+type numbers list diffT -> int -> o.
+numbers [] 0.
+numbers [injS A|Tail] Len :- numbers Tail Len.
+numbers [injI A|Tail] Len :- numbers Tail LenT, Len is LenT + 1.
+

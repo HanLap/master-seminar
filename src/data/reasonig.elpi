@@ -1,0 +1,15 @@
+kind city type.
+type london, nyc, chicago, portland, la city.
+
+
+type flyTo city -> city -> o.
+flyTo london nyc.
+flyTo chicago portland.
+flyTo portland la.
+
+
+type connected city -> city -> o.
+connected X X.
+% connected X Y :- connected Y X.
+connected X Z :- flyTo X Y , connected Y Z.
+connected X Z :- connected X Y , flyTo Y Z.

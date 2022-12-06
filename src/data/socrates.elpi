@@ -1,0 +1,25 @@
+
+
+type hasAge string -> int -> o.
+
+hasAge "Alan" 23.
+hasAge "Dennis" 9.
+hasAge "Grace" 9.
+hasAge "Helena" 20.
+
+type canDrink string -> o.
+
+canDrink Someone :- hasAge Someone Age , Age >= 18.
+
+
+kind person  type.
+type mallory, bob, alice  person.
+
+
+pred age o:person, o:int.
+
+age mallory 23.
+age bob 23.
+age alice 20.
+
+

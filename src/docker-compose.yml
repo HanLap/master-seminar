@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  arch:
+    build: .
+    volumes:
+      - ./data:/work:rw  
