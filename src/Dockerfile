@@ -31,6 +31,10 @@ RUN opam init --disable-sandbox -y
 RUN eval $(opam env --switch=default) 
 RUN opam install elpi -y
 
+COPY <<EOF /root/.bashrc
+#!/usr/bin/env bash
+eval $(opam env --switch=default) 
+EOF
 
 WORKDIR /work
 
