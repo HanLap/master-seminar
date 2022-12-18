@@ -6,13 +6,14 @@
 \usepackage[english]{babel}
 % \usepackage[german]{babel}
 
-
 \addtokomafont{disposition}{\sffamily}
 
+\usepackage{url}
 
 
 % To include graphics
 \usepackage{graphicx}
+\usepackage{svg}
 
 % Math stuff
 \usepackage{amsmath, amsfonts, amssymb, mathtools, mathabx}
@@ -22,6 +23,14 @@
 % For listings
 % needs -shell-escape option in latex and pygments installed (see https://pygments.org/)
 \usepackage{minted}
+\usepackage{listings}
+\lstset{
+  numbers=left,
+  stepnumber=1,    
+  firstnumber=1,
+  numberfirstline=true
+}
+
 
 % Some examples for quick inline code
 \newcommand{\prolog}[1]{\mintinline{prolog}{#1}}
@@ -40,7 +49,7 @@
 
 
   % $\lambda$Prolog
-  % \texttt{LANG-N-PLAY}
+  % LANG-N-PLAY
 
 \title{Implementing Language-Oriented Programming Languages with Higher-Order Logic Programming}
 \subtitle{Seminar: Recent Research on Declarative Programming\\
@@ -53,7 +62,7 @@
 \maketitle
 
 \begin{abstract}
-  Language-oriented programming languages are programming languages which use other languages as first class citizen. This allows for languages to be passed as arguments and to be modified at runtime. We describe how language-oriented programming languages can be implemented with the help of higher-order logic programming languages. To this end, \texttt{LANG-N-PLAY} is used as a reference for a functional language-oriented programming language. 
+  Language-oriented programming languages are programming languages which use other languages as first-class citizen. This allows for languages to be passed as arguments and to be modified at runtime. We describe how language-oriented programming languages can be implemented with the help of higher-order logic programming languages. To this end, LANG-N-PLAY is used as a reference for a functional language-oriented programming language. 
 \end{abstract}
 
 \input{chapters/introduction.tex}

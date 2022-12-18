@@ -1,9 +1,9 @@
 
 \section{Related Work}
+\label{related-work}
 
-The primary literature for this paper is 'On the Effectiveness of Higher-Order Logic Programming in Language-Oriented Programming.', written by M. Cimini \cite{cimini_effectiveness_2020}. in their work the Author shows how higher-order logic programming is a gread fit for implementing language-oriented programming languages. To this end Cimini presents an implementation of \texttt{LANG-N-PLAY}, written in $\lambda$Prolog. \texttt{LANG-N-PLAY} is a language-oriented programming langugage that was envisioned in \cite{cimini_languages_2018}.
+The primary literature for this paper is 'On the Effectiveness of Higher-Order Logic Programming in Language-Oriented Programming.', written by M. Cimini \cite{cimini_effectiveness_2020}. In their work the Author shows how higher-order logic programming is a great fit for implementing language-oriented programming languages. To this end Cimini presents an implementation of LANG-N-PLAY, written in $\lambda$Prolog. LANG-N-PLAY is a language-oriented programming language that was envisioned in \cite{cimini_languages_2018}. To our knowledge, Cimini is currently the only one to investigate the feasibility of implementing language-oriented programming languages using higher-order logic programming.
 
-\begin{itemize}
-  \item Programming with Higher-Order Logic\cite{miller_programming_2012}
-  \item Neverlang\cite{vacchi_neverlang_2015}
-\end{itemize}
+"Programming with Higher-Order Logic", by Miller and Nadathur is one of the primary knowledge sources for higher-order logic programming. In this work, the authors explain the intricacies of higher-order logic in detail, and show how to use it in $\lambda$Prolog. The two relevant implementations of $\lambda$Prolog are the Teyjus project \cite{noauthor_teyjusteyjus_2022}, as well as ELPI \cite{noauthor_elpi_2022}. Furthermore, the Abella theorem solver \cite{noauthor_abella_nodate} can be used to reason about $\lambda$Prolog programs.
+
+In the past, a number of tools and workbenches were developed to facilitate language-oriented programming. Neverlang \cite{vacchi_neverlang_2015}, Spoofax \cite{kats_spoofax_2010} and Racket \cite{flatt_reference_2010} are among the more noteworthy attempts. All these tools provide a more feature complete and mature environment than LANG-N-PLAY, for developing language-oriented. Nonetheless, LANG-N-PLAY's unique implementation makes it a worthwhile endeavor. In their paper Cimini notes an intention to further improve LANG-N-PLAY in the future and implement features found in other tools, such as language unification and restriction, grammar inheritance, language embedding, and aggregation \cite{cimini_effectiveness_2020}.

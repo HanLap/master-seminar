@@ -1,0 +1,19 @@
+
+version: '3.8'
+services:
+  latexmk:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/work:rw
+    user: 1000:100
+    entrypoint: latexmk
+  pdflatex:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/work:rw
+    user: 1000:100
+    entrypoint: pdflatex

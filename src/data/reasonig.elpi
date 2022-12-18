@@ -1,15 +1,21 @@
 kind city type.
-type london, nyc, chicago, portland, la city.
-
+type munich, ulm, frankfurt, cologne, berlin city.
 
 type flyTo city -> city -> o.
-flyTo london nyc.
-flyTo chicago portland.
-flyTo portland la.
-
+flyTo munich ulm.
+flyTo frankfurt cologne.
+flyTo cologne berlin.
 
 type connected city -> city -> o.
 connected X X.
 % connected X Y :- connected Y X.
 connected X Z :- flyTo X Y , connected Y Z.
 connected X Z :- connected X Y , flyTo Y Z.
+
+type getCheck city -> city -> o -> o.
+getCheck X X true.
+getCheck X Y (connected X Y).
+
+type check city -> city -> o.
+check X Y :- getCheck X Y F, F.
+

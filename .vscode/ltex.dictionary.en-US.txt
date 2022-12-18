@@ -1,2 +1,14 @@
 Lappe
 λProlog
+Prolog
+Cimini
+Neverlang
+getCheck
+ELPI
+elementAt
+Teyjus
+Abella
+Spoofax
+expLO
+lstLang
+plusLang

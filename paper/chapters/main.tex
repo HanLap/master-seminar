@@ -1,12 +1,247 @@
 
 
-\section{Features of Language-Oriented Programming}
-\begin{itemize}
-  \item language definitions
-  \item let binding
-  \item unionization
-  \item rule removal
-  \item functions on languages 
-\end{itemize}
+\section{Higher-Order Logic Programming}
+\label{higher-order-logic-programming}
+Higher-order logic programming languages extend logic programming with higher-order concepts, such as predicates as variables and hypothetical reasoning. $\lambda$Prolog is a primary representative for higher-order logic programming languages \cite{miller_programming_2012}. Besides Predicates as first-class citizens, $\lambda$Prolog extends Prolog with various features which are useful for implementing language-oriented languages.
 
-\section{Implementation of \texttt{LANG-N-PLAY}}
+
+\paragraph{Typed Logic Programming}
+$\lambda$Prolog implements a typing system. A program can specify a signature for entities. The program has to adhere to this signature, or it will be rejected by the compiler. For example a program that checks for transit connections between cities, could have the following signature.
+
+\begin{lstlisting}
+kind city type.
+type munich, ulm, frankfurt, cologne, berlin city.
+
+type flyTo city -> city -> o.
+flyTo munich ulm.
+flyTo frankfurt cologne.
+flyTo cologne berlin.
+
+type connected city -> city -> o.
+connected X X.
+connected X Z :- flyTo X Y , connected Y Z.
+connected X Z :- connected X Y , flyTo Y Z.
+\end{lstlisting}
+
+The keyword \lstinline{kind} is used to declare primitives while \lstinline{type} defines the signature of terms. 
+
+\paragraph{Formulae as First-Class Citizens}
+In $\lambda$Prolog it is possible to use Terms as variables. For example consider the following wrapper around the previous example:
+
+\begin{lstlisting}
+type getCheck city -> city -> o -> o.
+getCheck X X true.
+getCheck X Y (connected X Y).
+
+type check city -> city -> o.
+check X Y :- getCheck X Y F, F.
+\end{lstlisting}
+
+\lstinline{getCheck} provides a term as its output argument. This term is then evaluated in the term \lstinline{check}.
+
+\paragraph{Higher-Order Abstract Syntax}
+Compilers commonly use abstract syntax (first-order abstract syntax) as an internal representation for programming languages. Higher-order abstract syntax extends this with further information, such as relationship between variables and their bindings \cite{pfenning_higher-order_1988}.
+
+
+\paragraph{Hypothetical Reasoning}
+$\lambda$Prolog also implements hypothetical reasoning. This Allows us to ask questions, given certain hypothetical conditions. Consider the running example. Ulm and Frankfurt are not connected, but we can ask the following:
+
+\begin{lstlisting}
+connected ulm frankfurt => connected munich cologne.
+\end{lstlisting}
+
+Here we ask: "if Ulm and Frankfurt \emph{were} connected, would Munich be connected to Cologne?".
+
+\section{Features of Language-Oriented Programming}
+\label{features-of-language-oriented-programming}
+
+For language-oriented programming languages to be viable they usually implement certain functionality. In the following, we provide a list of possible features a language-oriented programming language could implement.
+
+\paragraph{Language Definitions}
+As the key feature of language-oriented programming languages, language-oriented programming languages need a mechanism to define languages.
+
+\paragraph{Let-Bindings}
+Let-bindings bind something to a name. A concept often found in functional programming languages. As language definitions can become complex, it is important to provide a mechanism to bind them to a reusable reference.
+
+\paragraph{Language Extension}
+Often times it makes sense to extend languages with new functionality. This can be achieved by unionizing a language with a set of language rules.
+
+\paragraph{Language Restriction}
+As a counterpart to language extension it can also sometimes make sense to restrict languages \cite{erdweg_language_2012}.
+
+\paragraph{Language Unification and Restriction}
+Language-oriented programming languages can also provide functionality to unify entirely independent languages. To achieve this, parts of the language have to be equalized \cite{erdweg_language_2012}. A real world example of such a unification would be HTML and JavaScript.
+
+\paragraph{Functions on Languages}
+This allows for the usage of language definitions inside of functions, thus making it possible to abstract functionality away.
+
+\paragraph{Inferring language dependencies}
+There is an ongoing effort in automatically determining the dependencies of a language \cite{mendez-acuna_leveraging_2016,kuhn_choosy_2015,butting_modeling_2018}.
+
+
+\paragraph{Language Inheritance and Embedding}
+With language inheritance it is possible to extend a grammar in a sub-grammar. This is achieved by extending non-terminals of the grammar with different parsing alternatives \cite{krahn_monticore_2010}. With language embedding, a grammar that is purposely incomplete can be extended. To achieve this, grammars have to contain non-terminals which are not fully realized. The language that is to be embedded can then implement those non-terminals \cite{krahn_monticore_2010}. These two features help in designing languages in a modular fashion.
+
+\paragraph{Execution of programs}
+Finally, a required feature for language-oriented programming languages is the possibility to actually run programs on language definitions. To this end language-oriented programming languages need to implement a syntax which allows declaring program code for a given language definition and running it.
+
+% Grammar inheritance, language embedding, and aggregation \cite{krahn_monticore_2010}, renaming, remapping \cite{vacchi_neverlang_2015}.
+
+\section{Implementation of LANG-N-PLAY}
+\label{lang-n-play} LANG-N-PLAY's compiler pipeline consists of two steps (figure \ref{fig:lnp-architecture}). First, a LANG-N-PLAY program is compiled. The compiler is written in OCaml and is responsible for type checking the program and then translating the program into $\lambda$Prolog code. The resulting $\lambda$Prolog program is then interpreted by ELPI \cite{noauthor_elpi_2022}, an embeddable $\lambda$Prolog interpreter. At its base, the LANG-N-PLAY interpreter defines terms called \lstinline|expLO| and two reduction steps \cite{cimini_effectiveness_2020}:
+
+\begin{lstlisting}
+type stepLO expLO -> expLO -> o.
+type valueLO expLO -> o.
+\end{lstlisting}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/"lnp-architecture"}
+  \caption{Architecture of the LANG-N-PLAY compiler \cite{cimini_effectiveness_2020}.}
+  \label{fig:lnp-architecture}
+\end{figure}
+
+\subsection{Language Definition}
+LANG-N-PLAY provides a domain specific language as means to specify language definitions. It closely resembles how language definitions are usually specified in research \cite{cimini_effectiveness_2020}. The following definition defines a language that has lists and provides an \lstinline{elementAt} operator, which returns the element of a list at a given index.
+
+\begin{lstlisting}
+{!
+  Type T ::= int | (list T),
+  Expression e ::= zero | (succ e) | nil | (cons e e)
+                   | (elementAt e e),
+  Value v ::= zero | (succ v) | nil | (cons v v),
+  Context C ::= (succ E) | (cons C e) | (cons v C)
+                | (elementAt C e) | (elementAt v C),
+  Environment Gamma ::= [x : T],
+  Relation ::= Gamma |- e : T | e --> e,
+  StartingCall ::= empty | -e : T | e --> e.
+
+  Gamma |- x : T <== x : T in Gamma,
+  Gamma |- zero : int,
+  Gamma |- (succ e) : int <== Gamma | - e : int,
+  Gamma |- nil : (list T),
+  Gamma |- (cons e1 e2) : (list T) <==
+           Gamma |- e1 : T /\ Gamma | - e2 : (list T),
+  Gamma |- (elementAt e1 e2) : T <==
+           Gamma |- e1 : int /\ Gamma | - e2 : (list T),
+  (elementAt zero (cons V1 V2)) --> V1,
+  (elementAt (succ V) (cons V1 V2)) --> (elementAt V V2)
+!}
+\end{lstlisting}
+
+In LANG-N-PLAY, the \lstinline|{! ... !}| construct marks a language definition block. Language definitions consist of two parts. A grammar which is defined on lines 2 through 10 and a inference system defined on lines 12 through 21.
+
+It is rather simple to compile language definitions defined in LANG-N-PLAY to $\lambda$Prolog because operational semantics map naturally to logic programming rules \cite{cimini_effectiveness_2020}. The following is a small excerpt of the resulting $\lambda$Prolog code for the given example.
+
+\begin{lstlisting}
+typeOf nil (list T).
+typeOf (cons E1 E2) (list T) :- typeOf E1 T,
+                                typeOf E2 (list T).
+typeOf (elementAt E1 E2) T :- typeOf E1 int,
+                              typeOf E2 (list T).
+step (elementAt zero (cons V1 V2)) V1 :- value V1, 
+                                         value V2.
+step (elementAt (succ V) (cons V1 V2)) (elementAt V V2)
+                                      :- value V1, 
+                                         value V2.
+\end{lstlisting}
+
+To facilitate developer-defined languages that can be manipulated at runtime, LANG-N-PLAY utilizes an internal representation for languages. This internal representation is of the type:
+
+\begin{lstlisting}
+type language (list o) -> expLO.
+\end{lstlisting}
+
+The language is represented as a set of its terms. Also, as grammar rules are not required to run a program, LANG-N-PLAY only compiles inference rules.
+
+
+\subsection{Language Operations}
+Currently, LANG-N-PLAY only implements a subset of the features outlined in Section \ref{features-of-language-oriented-programming}. While Cimini intends to implement many of these features in the future \cite{cimini_effectiveness_2020}, for now LANG-N-PLAY only implements the following:
+
+\paragraph{Let-Bindings}
+LANG-N-PLAY provides Haskell-style let-bindings. This feature allows for easy reuse of language definitions:
+
+\begin{lstlisting}
+let lstLang = {!
+  ...
+!}
+in ...
+\end{lstlisting}
+
+The reduction for this functionality is implemented as:
+
+\begin{lstlisting}
+  type letLO expLO -> (expLO -> expLO) -> expLO.
+  stepLO (letLO V R) (R V) :- valueLO V.
+\end{lstlisting}
+
+\paragraph{Language Union}
+LANG-N-PLAY also implements the unification of language rules. An extension of the previous example could be realized as follows:
+
+\begin{lstlisting}
+let safeLstLang = 
+  lstLang U {!
+    Expression e ::= oobError,
+    Error er ::= oobError
+    (elementAt zero nil) --> oobError,
+    (ElementAt (succ V) nil) --> oobError,
+  !}
+\end{lstlisting}
+
+This extension makes sure that an error is raised if a program tries to access an index that is outside the bounds of the list. The resulting $\lambda$Prolog code would be:
+
+\begin{lstlisting}
+unionLO
+  (language [ ...<lstLang>... ])
+  (language [ step (elementAt zero nil) oobError ;
+              step (elemntAt (succ V) nil) oobError])
+\end{lstlisting}
+
+\paragraph{Rule Removal}
+As counterpart to unification LANG-N-PLAY also implements the removal of language rules. To remove one of the rules, added in the previous example, the following is possible:
+
+\begin{lstlisting}
+remove (elementAt zero nil) --> oobError
+from safeLstLang 
+\end{lstlisting}
+
+LANG-N-PLAY compiles this to:
+
+\begin{lstlisting}
+  removeLO
+    (step (elementAt zero nil) oobError)
+    (language [ ...<lstLang>... ;
+                step (elementAt zero nil) oobError ;
+                step (elemntAt (succ V) nil) oobError])
+\end{lstlisting}
+
+Thanks to how equality matching works in $\lambda$Prolog, finding the correct rule to remove, is very lenient. In $\lambda$Prolog \lstinline|(term MyVar)| is equal to \lstinline|(term V)|.
+
+As a drawback, in its current implementation LANG-N-PLAY only allows for the removal of a single rule per operation. Thus, to completely remove the safe list extension from the previous example, four remove-operations would need to be chained.
+
+
+\subsection{Executing Programs}
+To execute programs LANG-N-PLAY provides syntax of the form \lstinline|language > program|. To run a program on the prior example:
+
+\begin{lstlisting}
+let lstLang = {! ... !}
+in lstlang> elementAt 3 [1, 3, 3, 7]
+\end{lstlisting}
+
+This example code would compile to:
+
+\begin{lstlisting}
+  execLO (language [ ...<lstLang>... ]) 
+         (elementAt 3 [1, 3, 3, 7])
+\end{lstlisting}
+
+LANG-N-PLAY can also switch between languages at runtime. Consider a language \lstinline|plusLang| that implements the operation \lstinline|plus|. It would then be possible to use this \lstinline|plusLang| and the previously defined \lstinline|lstLang| interchangeably:
+
+\begin{lstlisting}
+  let lstLang = {! ... !}
+  in 
+  let plusLang = {! ... !}
+  in pluslang> plus (lstLang> elementAt 2 [1, 2, 3]) 
+                    (lstLang> elementAt 1 [4, 5, 6])
+\end{lstlisting}
