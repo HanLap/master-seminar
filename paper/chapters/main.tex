@@ -64,7 +64,7 @@ As the key feature of language-oriented programming languages, language-oriented
 Let-bindings bind something to a name. A concept often found in functional programming languages. As language definitions can become complex, it is important to provide a mechanism to bind them to a reusable reference.
 
 \paragraph{Language Extension}
-Often times it makes sense to extend languages with new functionality. This can be achieved by unionizing a language with a set of language rules.
+Often times it makes sense to extend languages with new functionality. This can be achieved by unifying a language with a set of language rules.
 
 \paragraph{Language Restriction}
 As a counterpart to language extension it can also sometimes make sense to restrict languages \cite{erdweg_language_2012}.
@@ -97,7 +97,23 @@ type valueLO expLO -> o.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{images/"lnp-architecture"}
+  % \includegraphics[width=\linewidth]{images/"lnp-architecture"}
+  \begin{tikzpicture}[
+    squarednode/.style={rectangle, draw=gray!60, fill=white, very thick, minimum size=20mm, align=center},
+    thiccboi/.style={single arrow, draw=gray!60, fill=gray!10, minimum width = 15mm, single arrow head extend=3pt, minimum height=25mm}
+  ]
+
+  \node[thiccboi] at (2,0) {};
+  \node[thiccboi] at (7,0) {};
+
+  \node[squarednode] at ( 0, 0) (fst) {\uline{LANG-N-PLAY}\\Program};
+  \node[squarednode] at ( 5, 0) (snd) {\uline{OCaml}\\Type Checker/\\Compiler to LP};
+  \node[squarednode] at (10, 0) (trd) {Interpreter:\\\uline{Lambda Prolog}};
+
+  % \draw[arrow] {};
+
+
+  \end{tikzpicture}
   \caption{Architecture of the LANG-N-PLAY compiler \cite{cimini_effectiveness_2020}.}
   \label{fig:lnp-architecture}
 \end{figure}

@@ -5,6 +5,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 % \usepackage[german]{babel}
+% \usepackage{courier}
+\usepackage{fontspec}
+\setmonofont[
+  Contextuals={Alternate}
+]{Fira Code}
 
 \addtokomafont{disposition}{\sffamily}
 
@@ -24,11 +29,14 @@
 % needs -shell-escape option in latex and pygments installed (see https://pygments.org/)
 \usepackage{minted}
 \usepackage{listings}
+\usepackage{lstfiracode}
 \lstset{
   numbers=left,
   stepnumber=1,    
   firstnumber=1,
-  numberfirstline=true
+  numberfirstline=true,
+  style=FiraCodeStyle,
+  basicstyle=\ttfamily
 }
 
 
@@ -38,6 +46,9 @@
 
 % For diagrams and drawings
 \usepackage{tikz}
+\usepackage{ulem}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.arrows}
 
 % For Pseudocode
 \usepackage{algorithm}

@@ -3,5 +3,6 @@
   "ltex.enabled": [
     "latex",
     "markdown"
-  ]
+  ],
+  "latex-workshop.latex.recipe.default": "latexmk (lualatex)",
 }
