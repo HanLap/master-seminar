@@ -7,13 +7,12 @@
 % \usepackage[german]{babel}
 % \usepackage{courier}
 \usepackage{fontspec}
-\setmonofont[
-  Contextuals={Alternate}
-]{Fira Code}
+\setmonofont[Contextuals={Alternate}]{Fira Code}
 
 \addtokomafont{disposition}{\sffamily}
 
 \usepackage{url}
+\usepackage{hyperref}
 
 
 % To include graphics
@@ -38,6 +37,9 @@
   style=FiraCodeStyle,
   basicstyle=\ttfamily
 }
+
+\usepackage[nameinlink]{cleveref}
+\crefname{figure}{figure}{figures}
 
 
 % Some examples for quick inline code

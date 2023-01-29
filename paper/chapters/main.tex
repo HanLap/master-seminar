@@ -88,14 +88,15 @@ Finally, a required feature for language-oriented programming languages is the p
 % Grammar inheritance, language embedding, and aggregation \cite{krahn_monticore_2010}, renaming, remapping \cite{vacchi_neverlang_2015}.
 
 \section{Implementation of LANG-N-PLAY}
-\label{lang-n-play} LANG-N-PLAY's compiler pipeline consists of two steps (figure \ref{fig:lnp-architecture}). First, a LANG-N-PLAY program is compiled. The compiler is written in OCaml and is responsible for type checking the program and then translating the program into $\lambda$Prolog code. The resulting $\lambda$Prolog program is then interpreted by ELPI \cite{noauthor_elpi_2022}, an embeddable $\lambda$Prolog interpreter. At its base, the LANG-N-PLAY interpreter defines terms called \lstinline|expLO| and two reduction steps \cite{cimini_effectiveness_2020}:
+\label{lang-n-play} LANG-N-PLAY's compiler pipeline consists of two steps (\Cref{fig:lnp-architecture}). First, a LANG-N-PLAY program is compiled. The compiler is written in OCaml and is responsible for type checking the program and then translating the program into $\lambda$Prolog code. The resulting $\lambda$Prolog program is then interpreted by ELPI \cite{noauthor_elpi_2022}, an embeddable $\lambda$Prolog interpreter. At its base, the LANG-N-PLAY interpreter defines terms called \lstinline|expLO| and two reduction steps \cite{cimini_effectiveness_2020}:
 
 \begin{lstlisting}
+kind expLO type.
 type stepLO expLO -> expLO -> o.
 type valueLO expLO -> o.
 \end{lstlisting}
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   % \includegraphics[width=\linewidth]{images/"lnp-architecture"}
   \begin{tikzpicture}[
@@ -173,7 +174,7 @@ The language is represented as a set of its terms. Also, as grammar rules are no
 
 
 \subsection{Language Operations}
-Currently, LANG-N-PLAY only implements a subset of the features outlined in Section \ref{features-of-language-oriented-programming}. While Cimini intends to implement many of these features in the future \cite{cimini_effectiveness_2020}, for now LANG-N-PLAY only implements the following:
+Currently, LANG-N-PLAY only implements a subset of the features outlined in \Cref{features-of-language-oriented-programming}. While Cimini intends to implement many of these features in the future \cite{cimini_effectiveness_2020}, for now LANG-N-PLAY only implements the following:
 
 \paragraph{Let-Bindings}
 LANG-N-PLAY provides Haskell-style let-bindings. This feature allows for easy reuse of language definitions:
@@ -229,7 +230,7 @@ LANG-N-PLAY compiles this to:
     (step (elementAt zero nil) oobError)
     (language [ ...<lstLang>... ;
                 step (elementAt zero nil) oobError ;
-                step (elemntAt (succ V) nil) oobError])
+                step (elementAt (succ V) nil) oobError])
 \end{lstlisting}
 
 Thanks to how equality matching works in $\lambda$Prolog, finding the correct rule to remove, is very lenient. In $\lambda$Prolog \lstinline|(term MyVar)| is equal to \lstinline|(term V)|.
