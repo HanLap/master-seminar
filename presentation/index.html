@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>presentation</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/blood.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>Implementing Language-Oriented Programming Languages with Higher-Order Logic Programming</section>
+
+			<section>Why?</section>
+
+
+			<section>λProlog
+
+				<section></section>
+
+				<section>
+					Typed Logic Programming
+
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+							kind city type.
+							type munich, ulm, frankfurt, cologne, berlin city.
+							
+							type flyTo city -> city -> o.
+							flyTo munich ulm.
+							flyTo frankfurt cologne.
+							flyTo cologne berlin.
+							
+							type connected city -> city -> o.
+							connected X X.
+							connected X Z :- flyTo X Y , connected Y Z.
+							connected X Z :- connected X Y , flyTo Y Z.
+						</code></pre>
+				</section>
+
+				<section>
+					Formulae as First-Class Citizens
+
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+						type getCheck city -> city -> o -> o.
+						getCheck X X true.
+						getCheck X Y (connected X Y).
+
+						type check city -> city -> o.
+						check X Y :- getCheck X Y F, F.
+						</code></pre>
+				</section>
+
+				<section>
+					Higher-Order Abstract Syntax (HOAS)
+				</section>
+
+				<section>
+					Hypthetical Reasoning
+
+
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+						connected ulm frankfurt => connected munich cologne.
+					</code></pre>
+				</section>
+			</section>
+
+			<section>
+				Features of Language-Oriented Programming
+
+				<section>
+					Language Definitions
+				</section>
+
+				<section>
+					Let-Bindings
+				</section>
+
+				<section>
+					Language Extension
+				</section>
+
+				<section>
+					Language Restriction
+				</section>
+				
+			</section>
+
+			
+			<section>LANG-N-PLAY</section>
+
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+			slideNumber: 'c/t',
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+		});
+	</script>
+</body>
+
+</html>

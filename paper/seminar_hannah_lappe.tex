@@ -26,17 +26,12 @@
 
 % For listings
 % needs -shell-escape option in latex and pygments installed (see https://pygments.org/)
-\usepackage{minted}
-\usepackage{listings}
+\usepackage[
+  outputdir=out,
+]{minted}
+\setminted[elpi]{linenos}
 \usepackage{lstfiracode}
-\lstset{
-  numbers=left,
-  stepnumber=1,    
-  firstnumber=1,
-  numberfirstline=true,
-  style=FiraCodeStyle,
-  basicstyle=\ttfamily
-}
+
 
 \usepackage[nameinlink]{cleveref}
 \crefname{figure}{figure}{figures}

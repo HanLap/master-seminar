@@ -8,7 +8,7 @@ Higher-order logic programming languages extend logic programming with higher-or
 \paragraph{Typed Logic Programming}
 $\lambda$Prolog implements a typing system. A program can specify a signature for entities. The program has to adhere to this signature, or it will be rejected by the compiler. For example a program that checks for transit connections between cities, could have the following signature.
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 kind city type.
 type munich, ulm, frankfurt, cologne, berlin city.
 
@@ -21,21 +21,21 @@ type connected city -> city -> o.
 connected X X.
 connected X Z :- flyTo X Y , connected Y Z.
 connected X Z :- connected X Y , flyTo Y Z.
-\end{lstlisting}
+\end{minted}
 
 The keyword \lstinline{kind} is used to declare primitives while \lstinline{type} defines the signature of terms. 
 
 \paragraph{Formulae as First-Class Citizens}
 In $\lambda$Prolog it is possible to use Terms as variables. For example consider the following wrapper around the previous example:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 type getCheck city -> city -> o -> o.
 getCheck X X true.
 getCheck X Y (connected X Y).
 
 type check city -> city -> o.
 check X Y :- getCheck X Y F, F.
-\end{lstlisting}
+\end{minted}
 
 \lstinline{getCheck} provides a term as its output argument. This term is then evaluated in the term \lstinline{check}.
 
@@ -46,9 +46,9 @@ Compilers commonly use abstract syntax (first-order abstract syntax) as an inter
 \paragraph{Hypothetical Reasoning}
 $\lambda$Prolog also implements hypothetical reasoning. This Allows us to ask questions, given certain hypothetical conditions. Consider the running example. Ulm and Frankfurt are not connected, but we can ask the following:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 connected ulm frankfurt => connected munich cologne.
-\end{lstlisting}
+\end{minted}
 
 Here we ask: "if Ulm and Frankfurt \emph{were} connected, would Munich be connected to Cologne?".
 
@@ -90,11 +90,11 @@ Finally, a required feature for language-oriented programming languages is the p
 \section{Implementation of LANG-N-PLAY}
 \label{lang-n-play} LANG-N-PLAY's compiler pipeline consists of two steps (\Cref{fig:lnp-architecture}). First, a LANG-N-PLAY program is compiled. The compiler is written in OCaml and is responsible for type checking the program and then translating the program into $\lambda$Prolog code. The resulting $\lambda$Prolog program is then interpreted by ELPI \cite{noauthor_elpi_2022}, an embeddable $\lambda$Prolog interpreter. At its base, the LANG-N-PLAY interpreter defines terms called \lstinline|expLO| and two reduction steps \cite{cimini_effectiveness_2020}:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 kind expLO type.
 type stepLO expLO -> expLO -> o.
 type valueLO expLO -> o.
-\end{lstlisting}
+\end{minted}
 
 \begin{figure}[h]
   \centering
@@ -122,7 +122,7 @@ type valueLO expLO -> o.
 \subsection{Language Definition}
 LANG-N-PLAY provides a domain specific language as means to specify language definitions. It closely resembles how language definitions are usually specified in research \cite{cimini_effectiveness_2020}. The following definition defines a language that has lists and provides an \lstinline{elementAt} operator, which returns the element of a list at a given index.
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 {!
   Type T ::= int | (list T),
   Expression e ::= zero | (succ e) | nil | (cons e e)
@@ -145,13 +145,13 @@ LANG-N-PLAY provides a domain specific language as means to specify language def
   (elementAt zero (cons V1 V2)) --> V1,
   (elementAt (succ V) (cons V1 V2)) --> (elementAt V V2)
 !}
-\end{lstlisting}
+\end{minted}
 
 In LANG-N-PLAY, the \lstinline|{! ... !}| construct marks a language definition block. Language definitions consist of two parts. A grammar which is defined on lines 2 through 10 and a inference system defined on lines 12 through 21.
 
 It is rather simple to compile language definitions defined in LANG-N-PLAY to $\lambda$Prolog because operational semantics map naturally to logic programming rules \cite{cimini_effectiveness_2020}. The following is a small excerpt of the resulting $\lambda$Prolog code for the given example.
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 typeOf nil (list T).
 typeOf (cons E1 E2) (list T) :- typeOf E1 T,
                                 typeOf E2 (list T).
@@ -162,13 +162,13 @@ step (elementAt zero (cons V1 V2)) V1 :- value V1,
 step (elementAt (succ V) (cons V1 V2)) (elementAt V V2)
                                       :- value V1, 
                                          value V2.
-\end{lstlisting}
+\end{minted}
 
 To facilitate developer-defined languages that can be manipulated at runtime, LANG-N-PLAY utilizes an internal representation for languages. This internal representation is of the type:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 type language (list o) -> expLO.
-\end{lstlisting}
+\end{minted}
 
 The language is represented as a set of its terms. Also, as grammar rules are not required to run a program, LANG-N-PLAY only compiles inference rules.
 
@@ -179,24 +179,24 @@ Currently, LANG-N-PLAY only implements a subset of the features outlined in \Cre
 \paragraph{Let-Bindings}
 LANG-N-PLAY provides Haskell-style let-bindings. This feature allows for easy reuse of language definitions:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 let lstLang = {!
   ...
 !}
 in ...
-\end{lstlisting}
+\end{minted}
 
 The reduction for this functionality is implemented as:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
   type letLO expLO -> (expLO -> expLO) -> expLO.
   stepLO (letLO V R) (R V) :- valueLO V.
-\end{lstlisting}
+\end{minted}
 
 \paragraph{Language Union}
 LANG-N-PLAY also implements the unification of language rules. An extension of the previous example could be realized as follows:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 let safeLstLang = 
   lstLang U {!
     Expression e ::= oobError,
@@ -204,34 +204,34 @@ let safeLstLang =
     (elementAt zero nil) --> oobError,
     (ElementAt (succ V) nil) --> oobError,
   !}
-\end{lstlisting}
+\end{minted}
 
 This extension makes sure that an error is raised if a program tries to access an index that is outside the bounds of the list. The resulting $\lambda$Prolog code would be:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 unionLO
   (language [ ...<lstLang>... ])
   (language [ step (elementAt zero nil) oobError ;
               step (elemntAt (succ V) nil) oobError])
-\end{lstlisting}
+\end{minted}
 
 \paragraph{Rule Removal}
 As counterpart to unification LANG-N-PLAY also implements the removal of language rules. To remove one of the rules, added in the previous example, the following is possible:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 remove (elementAt zero nil) --> oobError
 from safeLstLang 
-\end{lstlisting}
+\end{minted}
 
 LANG-N-PLAY compiles this to:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
   removeLO
     (step (elementAt zero nil) oobError)
     (language [ ...<lstLang>... ;
                 step (elementAt zero nil) oobError ;
                 step (elementAt (succ V) nil) oobError])
-\end{lstlisting}
+\end{minted}
 
 Thanks to how equality matching works in $\lambda$Prolog, finding the correct rule to remove, is very lenient. In $\lambda$Prolog \lstinline|(term MyVar)| is equal to \lstinline|(term V)|.
 
@@ -241,24 +241,24 @@ As a drawback, in its current implementation LANG-N-PLAY only allows for the rem
 \subsection{Executing Programs}
 To execute programs LANG-N-PLAY provides syntax of the form \lstinline|language > program|. To run a program on the prior example:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
 let lstLang = {! ... !}
 in lstlang> elementAt 3 [1, 3, 3, 7]
-\end{lstlisting}
+\end{minted}
 
 This example code would compile to:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
   execLO (language [ ...<lstLang>... ]) 
          (elementAt 3 [1, 3, 3, 7])
-\end{lstlisting}
+\end{minted}
 
 LANG-N-PLAY can also switch between languages at runtime. Consider a language \lstinline|plusLang| that implements the operation \lstinline|plus|. It would then be possible to use this \lstinline|plusLang| and the previously defined \lstinline|lstLang| interchangeably:
 
-\begin{lstlisting}
+\begin{minted}{elpi}
   let lstLang = {! ... !}
   in 
   let plusLang = {! ... !}
   in pluslang> plus (lstLang> elementAt 2 [1, 2, 3]) 
                     (lstLang> elementAt 1 [4, 5, 6])
-\end{lstlisting}
+\end{minted}
