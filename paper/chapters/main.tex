@@ -96,7 +96,7 @@ type stepLO expLO -> expLO -> o.
 type valueLO expLO -> o.
 \end{minted}
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   % \includegraphics[width=\linewidth]{images/"lnp-architecture"}
   \begin{tikzpicture}[
@@ -132,7 +132,7 @@ LANG-N-PLAY provides a domain specific language as means to specify language def
                 | (elementAt C e) | (elementAt v C),
   Environment Gamma ::= [x : T],
   Relation ::= Gamma |- e : T | e --> e,
-  StartingCall ::= empty | -e : T | e --> e.
+  StartingCall ::= empty |- e : T | e --> e.
 
   Gamma |- x : T <== x : T in Gamma,
   Gamma |- zero : int,
@@ -147,7 +147,7 @@ LANG-N-PLAY provides a domain specific language as means to specify language def
 !}
 \end{minted}
 
-In LANG-N-PLAY, the \lstinline|{! ... !}| construct marks a language definition block. Language definitions consist of two parts. A grammar which is defined on lines 2 through 10 and a inference system defined on lines 12 through 21.
+In LANG-N-PLAY, the \lstinline|{! ... !}| construct marks a language definition block. Language definitions consist of two parts. A grammar which is defined on lines 2 through 10 and an inference system defined on lines 12 through 21.
 
 It is rather simple to compile language definitions defined in LANG-N-PLAY to $\lambda$Prolog because operational semantics map naturally to logic programming rules \cite{cimini_effectiveness_2020}. The following is a small excerpt of the resulting $\lambda$Prolog code for the given example.
 

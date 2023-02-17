@@ -9,7 +9,7 @@
 
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/blood.css">
+	<link rel="stylesheet" href="dist/theme/night.css">
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -18,28 +18,86 @@
 <body>
 	<div class="reveal">
 		<div class="slides">
-			<section>Implementing Language-Oriented Programming Languages with Higher-Order Logic Programming</section>
+			<section>
+				Implementing Language-Oriented Programming Languages
+				<br>
+				<small>with Higher-Order Logic Programming</small>
+			</section>
 
-			<section>Why?</section>
+			<section>
+				Overview
 
+				<section>
+					<ol>
+						<li class="fragment">Higher-Order Logic Programming</li>
+						<li class="fragment">Language-Oriented Programming</li>
+						<li class="fragment">Implementation of LANG-N-PLAY</li>
+					</ol>
+				</section>
+			</section>
 
-			<section>λProlog
+			<section>
+				Higher-Order Logic Programming
 
 				<section></section>
 
 				<section>
+					<h3>λProlog</h3>
+
+					<ul>
+						<li class="fragment">Typed Logic Programming</li>
+						<li class="fragment">Formulae as First-Class Citizens</li>
+						<li class="fragment">Hypothetical Reasoning</li>
+					</ul>
+
+					<aside class="notes">
+						<ul>
+							<li>higher-order logic language</li>
+							<li>extension von Prolog</li>
+							<li>features:</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
 					Typed Logic Programming
 
-					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+					<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers="|1|2|4,6"">
 							kind city type.
 							type munich, ulm, frankfurt, cologne, berlin city.
 							
-							type flyTo city -> city -> o.
+							type flyTo city -> city -> prop.
+
+							type connected city -> city -> prop.
+						</code></pre>
+
+					<aside class="notes">
+						<ul>
+							<li>kleines logic Program</li>
+							<li>Städte die verbunden sind</li>
+
+							<li>kind: primitive type</li>
+							<li>city</li>
+
+							<li>type: Terme</li>
+							<li>städte, flyTo, connected</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					Typed Logic Programming
+
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers="5-7,10-12">
+							kind city type.
+							type munich, ulm, frankfurt, cologne, berlin city.
+							
+							type flyTo city -> city -> prop.
 							flyTo munich ulm.
 							flyTo frankfurt cologne.
 							flyTo cologne berlin.
 							
-							type connected city -> city -> o.
+							type connected city -> city -> prop.
 							connected X X.
 							connected X Z :- flyTo X Y , connected Y Z.
 							connected X Z :- connected X Y , flyTo Y Z.
@@ -49,53 +107,382 @@
 				<section>
 					Formulae as First-Class Citizens
 
-					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
-						type getCheck city -> city -> o -> o.
+					<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers="|1|">
+						type getCheck city -> city -> prop -> prop.
 						getCheck X X true.
 						getCheck X Y (connected X Y).
 
-						type check city -> city -> o.
+						type check city -> city -> prop.
 						check X Y :- getCheck X Y F, F.
 						</code></pre>
 				</section>
 
-				<section>
+				<section data-visibility="hidden">
 					Higher-Order Abstract Syntax (HOAS)
 				</section>
 
 				<section>
-					Hypthetical Reasoning
+					Hypothetical Reasoning
 
-
-					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+					<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers>
 						connected ulm frankfurt => connected munich cologne.
 					</code></pre>
+
+					<aside class="notes">
+						<ul>
+							<li>zur laufzeit</li>
+							<li>temporäre regeln</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 
 			<section>
-				Features of Language-Oriented Programming
+				Language-Oriented Programming
+
+				<section></section>
 
 				<section>
+					<h3>
+						LANG-N-PLAY
+					</h3>
+
+					<div>
+						<small>
+							<a href="https://github.com/mcimini/lang-n-play" target="_blank">
+								https://github.com/mcimini/lang-n-play
+							</a>
+						</small>
+					</div>
+
+					<ul>
+						<li class="fragment">Language Definitions</li>
+						<li class="fragment">let-in Blocks</li>
+						<li class="fragment">Language Execution</li>
+						<li class="fragment">Language Unification</li>
+						<li class="fragment">Rule Removal</li>
+					</ul>
+
+					<aside class="notes">
+						<ul>
+							<li>functional language-oriented</li>
+							<li>was ist das?</li>
+						</ul>
+					</aside>
+				</section>
+
+
+				<section data-auto-animate>
 					Language Definitions
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers="|1,22|2-10|12-21">
+						{!
+							Type T ::= int | (list T),
+							Expression e ::= zero | (succ e) | nil | (cons e e)
+															 | (elementAt e e),
+							Value v ::= zero | (succ v) | nil | (cons v v),
+							Context C ::= (succ E) | (cons C e) | (cons v C)
+														| (elementAt C e) | (elementAt v C),
+							Environment Gamma ::= [x : T],
+							Relation ::= Gamma |- e : T | e --> e,
+							StartingCall ::= empty |- e : T | e --> e.
+						
+							Gamma |- x : T <== x : T in Gamma,
+							Gamma |- zero : int,
+							Gamma |- (succ e) : int <== Gamma |- e : int,
+							Gamma |- nil : (list T),
+							Gamma |- (cons e1 e2) : (list T) <==
+											 Gamma |- e1 : T /\ Gamma |- e2 : (list T),
+							Gamma |- (elementAt e1 e2) : T <==
+											 Gamma |- e1 : int /\ Gamma |- e2 : (list T),
+							(elementAt zero (cons V1 V2)) --> V1,
+							(elementAt (succ V) (cons V1 V2)) --> (elementAt V V2)
+						!}
+					</code></pre>
 				</section>
 
-				<section>
-					Let-Bindings
+				<section data-auto-animate>
+					Language Definitions
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+						{! list	!}
+					</code></pre>
+
+					<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers>
+						elementAt 2 [ 1, 2, 3, 4 ]
+					</code></pre>
 				</section>
 
-				<section>
-					Language Extension
+
+				<section data-auto-animate>
+					let-in Blocks
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers>
+					let listLang = {! list !}
+
+					in
+					</code></pre>
+
 				</section>
 
-				<section>
-					Language Restriction
+				<section data-auto-animate>
+					Language Execution
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers>
+					let listLang = {! list !}
+
+					in listLang> elementAt 2 [ 1, 2, 3, 4 ] // 3 
+					</code></pre>
+
 				</section>
-				
+
+				<section data-auto-animate>
+					Language Execution
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers>
+					let listLang = {! list !}
+					let plusLang = {! plus !}
+					
+					in listLang> elementAt 2 [ 1, 2, 3, 4 ] // 3 
+				  </code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Language Execution
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers="4">
+					let listLang = {! list !}
+					let plusLang = {! plus !}
+
+					in plusLang> plus 1 2 // 3 
+				  </code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Language Execution
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers="4,5">
+					let listLang = {! list !}
+					let plusLang = {! plus !}
+
+					in plusLang> plus (listLang> elementAt 2 [ 1, 2, 3, 4 ])
+					                  (listLang> elementAt 0 [ 1, 2 ])
+				  </code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Language Unification
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers="1">
+					let combinedLang = {! list !} U {! plus !}
+
+				  </code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Language Unification
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers="3,4">
+					let combinedLang = {! list !} U {! plus !}
+
+					in combinedLang> plus (elementAt 2 [ 1, 2, 3, 4 ])
+					                      (elementAt 0 [ 1, 2 ])
+				  </code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Rule Removal
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers="3,4">
+				let combinedLang = {! list !} U {! plus !}
+
+				in remove ( ... )
+					  from combinedLang 
+				  </code></pre>
+				</section>
+
 			</section>
 
-			
-			<section>LANG-N-PLAY</section>
+			<section>
+				Implementation of LANG-N-PLAY
+
+				<section>
+					<aside class="notes">
+						<ul>
+							<li>Schauen uns Implementation an</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<div class="r-stack">
+						<img style="padding: 2em;" src="images/lnp-architecture.svg">
+						<div class="fragment" style="margin-right: 3.75em; width: 5em; height: 5em; border: red solid 3px"></div>
+					</div>
+
+					<aside class="notes">
+						<ul>
+							<li>LNP Architektur</li>
+							<li>OCaml compiled to λProlog expressions</li>
+							<li>wird in λProlog interpreter ausgeführt</li>
+							<li>generierte λProlog Ausdrücke an</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers>
+					kind expLO type.
+					type stepLO expLO -> expLO -> prop.
+					type valueLO expLO -> prop.
+				  </code></pre>
+
+					<aside class="notes">
+						<ul>
+							<li> expLO expressions der Sprache </li>
+							<li> stepLO wie man von exp zu exp kommt </li>
+							<li> valueLO Auflösung </li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					Language Definitions
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+						{!
+							Type T ::= int | (list T),
+							Expression e ::= zero | (succ e) | nil | (cons e e)
+															 | (elementAt e e),
+							Value v ::= zero | (succ v) | nil | (cons v v),
+							Context C ::= (succ E) | (cons C e) | (cons v C)
+														| (elementAt C e) | (elementAt v C),
+							Environment Gamma ::= [x : T],
+							Relation ::= Gamma |- e : T | e --> e,
+							StartingCall ::= empty |- e : T | e --> e.
+						
+							Gamma |- x : T <== x : T in Gamma,
+							Gamma |- zero : int,
+							Gamma |- (succ e) : int <== Gamma |- e : int,
+							Gamma |- nil : (list T),
+							Gamma |- (cons e1 e2) : (list T) <==
+											 Gamma |- e1 : T /\ Gamma |- e2 : (list T),
+							Gamma |- (elementAt e1 e2) : T <==
+											 Gamma |- e1 : int /\ Gamma |- e2 : (list T),
+							(elementAt zero (cons V1 V2)) --> V1,
+							(elementAt (succ V) (cons V1 V2)) --> (elementAt V V2)
+						!}
+				  </code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Language Definitions
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers>
+						language
+						[
+						typeOf nil (list T) ;
+						typeOf (cons E1 E2) (list T) :- typeOf E1 T,
+						typeOf E2 (list T) ;
+						typeOf (elementAt E1 E2) T :- typeOf E1 int ,
+						typeOf E2 (list T) ;
+						step ( elementAt zero (cons V1 V2)) V1 :- value V1 ,
+						value V2 ;
+						step ( elementAt ( succ V) (cons V1 V2)) (elementAt V V2)
+						:- value V1 , value V2 ;
+						value nil ;
+						value (cons V1 V2) :- value V1 , value V2 ;
+						step ( elementAt E1 E2) (elementAt E1' E2) :- step E1 E1';
+						step ( elementAt V1 E2) (elementAt V1 E2') :- step E2 E2';
+						... the rest of contextual reduction rules ...
+						]
+				  </code></pre>
+				</section>
+
+
+				<section data-auto-animate>
+					Language Definitions
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers><script type="text/template">
+						language
+						[
+							<Rules of List>
+						]
+				  </script></code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Language Definitions
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers><script type="text/template">
+						language [ <Rules of List> ]
+				  </script></code></pre>
+
+					<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers="1|3"><script type="text/template">
+						type language (list prop) -> expLO.
+
+						valueLO (language Rules).
+				  </script></code></pre>
+				</section>
+
+				<section data-auto-animate>
+					Language Execution
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers><script type="text/template">
+						{! list !}> (elementAt 1 [ 1, 2, 3, 4 ])
+				  </script></code></pre>
+					<div class="fragment">
+
+						<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers="|1|3-5|7,8"><script type="text/template">
+					type execLO expLO -> program -> expLO.
+
+					stepLO (execLO (language Language) Prg )
+								 (execLO (language Language) Prg')
+								 :- (Language => (step Prg Prg')).
+
+				 valueLO (execLO (language Language) Prg)
+								 :- (Language => (value Prg))
+					</script></code></pre>
+					</div>
+
+				</section>
+
+				<section data-auto-animate>
+					Language Unification
+					<pre data-id="code-animation"><code class="hljs js" data-trim data-line-numbers><script type="text/template">
+						{! list !} U {! plus !}
+				  </script></code></pre>
+					<div class="fragment">
+						<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers><script type="text/template">
+						type unionLO expLO -> expLO -> expLO.						
+
+						stepLO
+								(unionLO (language Rules1) (language Rules2))
+								(language Result)
+								:- append Rules1 Rules2 Result.
+						</script></code></pre>
+					</div>
+				</section>
+
+				<section data-auto-animate>
+					Rule Removal
+					<pre data-id="code-animation"><code class="hljs nohighlight" data-trim data-line-numbers><script type="text/template">
+					remove ( ... )
+					from {! list !}
+				  </script></code></pre>
+					<div class="fragment">
+						<pre data-id="code-animation" class="fragment"><code class="hljs nohighlight" data-trim data-line-numbers><script type="text/template">
+						type removeLO prop -> expLO -> expLO.						
+
+						stepLO (removeLO Formula (language Rules)) 
+						       (language Result)
+						       :- listRemove Formula Rules Result.
+						</script></code></pre>
+					</div>	
+				</section>
+
+			</section>
+
+			<section>
+				Summary
+
+				<section>
+					<ul>
+						<li class="fragment">Higher-order Formulae naturally model language definitions</li>
+						<li class="fragment">Hypothetical Reasoning makes it possible to load language definitions at runtime</li>
+					</ul>
+				</section>
+			</section>
+
+
+			<section>
+				Questions?
+			</section>
 
 		</div>
 	</div>
@@ -117,4 +504,4 @@
 	</script>
 </body>
 
-</html>
+</html>`
